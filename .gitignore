@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Data storage
+data/
+
+# Configuration
+.env
+config.yaml
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+
+# IDE/Tools
+.trae/
