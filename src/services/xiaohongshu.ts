@@ -170,6 +170,7 @@ export class XiaohongshuService {
       font-size: 24px;
       font-weight: 800;
       line-height: 1.35;
+      height: 98px;
       letter-spacing: -0.5px;
       display: -webkit-box;
       -webkit-line-clamp: 3;

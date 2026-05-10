@@ -1,7 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import moment from 'moment';
 import { config } from '../config';
-import { FeedItem } from '../models';
 import { DatabaseService } from './database';
 import { BriefingItem, GitHubReleaseSummary } from './ai';
 
@@ -22,18 +21,6 @@ export class EmailService {
     });
   }
 
-  private get bgColor(): string {
-    return config.branding.email.surface;
-  }
-
-  private get primaryColor(): string {
-    return config.branding.email.primary;
-  }
-
-  private get primaryDark(): string {
-    return config.branding.email.primaryDark;
-  }
-
   private get headerEmoji(): string {
     return config.branding.email.headerEmoji;
   }
@@ -47,11 +34,19 @@ export class EmailService {
   }
 
   private markdownToHtml(text: string): string {
+    const c = config.branding.card;
     return text
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/`(.+?)`/g, `<code style="background: rgba(102, 126, 234, 0.2); padding: 2px 6px; border-radius: 3px; font-family: monospace;">$1</code>`)
+      .replace(/`(.+?)`/g, `<code style="background: rgba(${this.hexToRgb(c.primary)}, 0.2); padding: 2px 6px; border-radius: 3px; font-family: monospace;">$1</code>`)
       .replace(/\n/g, '<br>');
+  }
+
+  private hexToRgb(hex: string): string {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `${r}, ${g}, ${b}`;
   }
 
   async sendBriefingFromItems(items: BriefingItem[]): Promise<boolean> {
@@ -119,7 +114,7 @@ export class EmailService {
   }
 
   private generateBriefingHTMLFromItems(items: BriefingItem[]): string {
-    const p = config.branding.email;
+    const c = config.branding.card;
     let html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -128,19 +123,19 @@ export class EmailService {
   <title>${this.subjectPrefix}</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      color: ${c.textPrimary};
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background-color: ${p.surface};
+      background-color: ${c.surface};
+      -webkit-font-smoothing: antialiased;
     }
     .header {
-      background: linear-gradient(135deg, ${p.primary} 0%, ${p.primaryDark} 100%);
+      background: linear-gradient(135deg, ${c.primary} 0%, ${c.primaryDark} 100%);
       color: white;
       padding: 30px;
-      border-radius: 10px;
+      border-radius: 16px;
       margin-bottom: 30px;
       text-align: center;
     }
@@ -152,57 +147,86 @@ export class EmailService {
       margin: 10px 0 0;
       opacity: 0.9;
     }
-    .article {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
+    .card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      overflow: hidden;
       margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06), 0 4px 24px rgba(0, 0, 0, 0.04);
     }
-    .article-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
+    .card-top {
+      background: ${c.primary};
+      padding: 28px 24px;
+      color: white;
+    }
+    .card-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.35;
+      color: white;
       text-decoration: none;
       display: block;
-      margin-bottom: 10px;
+      letter-spacing: -0.5px;
     }
-    .article-title:hover {
-      color: ${p.primary};
+    .card-source {
+      margin-top: 12px;
+      font-size: 12px;
+      opacity: 0.7;
+      letter-spacing: 0.3px;
+      font-weight: 500;
     }
-    .article-summary {
-      color: #555;
+    .card-bottom {
+      background: ${c.surface};
+      padding: 24px;
+    }
+    .card-summary {
       font-size: 14px;
       line-height: 1.8;
+      color: ${c.textSecondary};
+      text-align: justify;
     }
-    .article-meta {
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .card-tag {
+      background: white;
+      color: ${c.primaryDark};
+      border: 1px solid ${c.border};
+      padding: 4px 10px;
+      border-radius: 5px;
       font-size: 12px;
-      color: #999;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
     .footer {
       text-align: center;
       padding: 20px;
-      color: #999;
+      color: ${c.textDisabled};
       font-size: 12px;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>${p.headerEmoji} ${this.subjectPrefix}</h1>
+    <h1>${config.branding.email.headerEmoji} ${this.subjectPrefix}</h1>
     <p>${moment().format('YYYY年MM月DD日 HH:mm')}</p>
   </div>
 `;
 
     for (const item of items) {
       html += `
-  <div class="article">
-    <a href="${item.link}" class="article-title" target="_blank">${item.title}</a>
-    <div class="article-summary">${item.summary}</div>
-    ${item.feedTitle ? `<div class="article-meta">来源: ${item.feedTitle}</div>` : ''}
+  <div class="card">
+    <div class="card-top">
+      <a href="${item.link}" class="card-title" target="_blank">${item.title}</a>
+      <div class="card-source">${item.feedTitle || '未知来源'}</div>
+    </div>
+    <div class="card-bottom">
+      <div class="card-summary">${item.summary}</div>
+      ${item.tags && item.tags.length > 0 ? `<div class="card-tags">${item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}</div>` : ''}
+    </div>
   </div>`;
     }
 
@@ -217,7 +241,7 @@ export class EmailService {
   }
 
   private generateBriefingHTMLWithReleases(items: BriefingItem[], releases: GitHubReleaseSummary[]): string {
-    const p = config.branding.email;
+    const c = config.branding.card;
     let html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -226,19 +250,19 @@ export class EmailService {
   <title>${this.subjectPrefix}</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      color: ${c.textPrimary};
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background-color: ${p.surface};
+      background-color: ${c.surface};
+      -webkit-font-smoothing: antialiased;
     }
     .header {
-      background: linear-gradient(135deg, ${p.primary} 0%, ${p.primaryDark} 100%);
+      background: linear-gradient(135deg, ${c.primary} 0%, ${c.primaryDark} 100%);
       color: white;
       padding: 30px;
-      border-radius: 10px;
+      border-radius: 16px;
       margin-bottom: 30px;
       text-align: center;
     }
@@ -250,45 +274,69 @@ export class EmailService {
       margin: 10px 0 0;
       opacity: 0.9;
     }
-    .article {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
+    .card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      overflow: hidden;
       margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06), 0 4px 24px rgba(0, 0, 0, 0.04);
     }
-    .article-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
+    .card-top {
+      background: ${c.primary};
+      padding: 28px 24px;
+      color: white;
+    }
+    .card-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.35;
+      color: white;
       text-decoration: none;
       display: block;
-      margin-bottom: 10px;
+      letter-spacing: -0.5px;
     }
-    .article-title:hover {
-      color: ${p.primary};
+    .card-source {
+      margin-top: 12px;
+      font-size: 12px;
+      opacity: 0.7;
+      letter-spacing: 0.3px;
+      font-weight: 500;
     }
-    .article-summary {
-      color: #555;
+    .card-bottom {
+      background: ${c.surface};
+      padding: 24px;
+    }
+    .card-summary {
       font-size: 14px;
       line-height: 1.8;
+      color: ${c.textSecondary};
+      text-align: justify;
     }
-    .article-meta {
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .card-tag {
+      background: white;
+      color: ${c.primaryDark};
+      border: 1px solid ${c.border};
+      padding: 4px 10px;
+      border-radius: 5px;
       font-size: 12px;
-      color: #999;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
     .divider {
       border: none;
       height: 2px;
-      background: linear-gradient(90deg, transparent, ${p.primary}, transparent);
+      background: linear-gradient(90deg, transparent, ${c.primary}, transparent);
       margin: 40px 0;
     }
     .release-section {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      border-radius: 10px;
+      border-radius: 16px;
       padding: 25px;
       margin-bottom: 20px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
@@ -298,7 +346,7 @@ export class EmailService {
       font-size: 20px;
       margin-bottom: 20px;
       padding-bottom: 10px;
-      border-bottom: 2px solid ${p.primary};
+      border-bottom: 2px solid ${c.primary};
     }
     .release-item {
       background: rgba(255,255,255,0.05);
@@ -310,7 +358,7 @@ export class EmailService {
       margin-bottom: 0;
     }
     .release-version {
-      color: ${p.primary};
+      color: ${c.primary};
       font-size: 16px;
       font-weight: 600;
       text-decoration: none;
@@ -318,7 +366,7 @@ export class EmailService {
       margin-bottom: 8px;
     }
     .release-version:hover {
-      color: ${p.primaryLight};
+      color: ${c.primaryLight};
     }
     .release-time {
       color: #888;
@@ -336,24 +384,29 @@ export class EmailService {
     .footer {
       text-align: center;
       padding: 20px;
-      color: #999;
+      color: ${c.textDisabled};
       font-size: 12px;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>${p.headerEmoji} ${this.subjectPrefix}</h1>
+    <h1>${config.branding.email.headerEmoji} ${this.subjectPrefix}</h1>
     <p>${moment().format('YYYY年MM月DD日 HH:mm')}</p>
   </div>
 `;
 
     for (const item of items) {
       html += `
-  <div class="article">
-    <a href="${item.link}" class="article-title" target="_blank">${item.title}</a>
-    <div class="article-summary">${item.summary}</div>
-    ${item.feedTitle ? `<div class="article-meta">来源: ${item.feedTitle}</div>` : ''}
+  <div class="card">
+    <div class="card-top">
+      <a href="${item.link}" class="card-title" target="_blank">${item.title}</a>
+      <div class="card-source">${item.feedTitle || '未知来源'}</div>
+    </div>
+    <div class="card-bottom">
+      <div class="card-summary">${item.summary}</div>
+      ${item.tags && item.tags.length > 0 ? `<div class="card-tags">${item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}</div>` : ''}
+    </div>
   </div>`;
     }
 
@@ -385,169 +438,4 @@ export class EmailService {
     return html;
   }
 
-  async sendBriefing(items: FeedItem[]): Promise<boolean> {
-    if (items.length === 0) {
-      console.log('没有文章需要发送');
-      return false;
-    }
-
-    const subject = `${this.subjectPrefix} - ${moment().format('YYYY年MM月DD日')}`;
-    const html = this.generateBriefingHTML(items);
-
-    try {
-      await this.transporter.sendMail({
-        from: `"${this.senderName}" <${config.email.smtp.user}>`,
-        to: config.email.smtp.user,
-        subject: subject,
-        html: html,
-      });
-
-      this.db.saveBriefing({
-        subject: subject,
-        content: html,
-        sentAt: new Date(),
-        itemCount: items.length,
-      });
-
-      console.log(`简报已发送: ${subject}，共 ${items.length} 篇文章`);
-      return true;
-    } catch (error) {
-      console.error('发送邮件失败:', error);
-      return false;
-    }
-  }
-
-  private generateBriefingHTML(items: FeedItem[]): string {
-    const groupedItems = this.groupByFeed(items);
-    const p = config.branding.email;
-
-    let html = `<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${this.subjectPrefix}</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: ${p.surface};
-    }
-    .header {
-      background: linear-gradient(135deg, ${p.primary} 0%, ${p.primaryDark} 100%);
-      color: white;
-      padding: 30px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-    .header p {
-      margin: 10px 0 0;
-      opacity: 0.9;
-    }
-    .feed-section {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .feed-title {
-      color: ${p.primary};
-      font-size: 20px;
-      border-bottom: 2px solid ${p.primary};
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-    }
-    .article {
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .article:last-child {
-      border-bottom: none;
-    }
-    .article-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #333;
-      text-decoration: none;
-      display: block;
-      margin-bottom: 8px;
-    }
-    .article-title:hover {
-      color: ${p.primary};
-    }
-    .article-summary {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .article-meta {
-      font-size: 12px;
-      color: #999;
-      margin-top: 8px;
-    }
-    .footer {
-      text-align: center;
-      padding: 20px;
-      color: #999;
-      font-size: 12px;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>${p.headerEmoji} ${this.subjectPrefix}</h1>
-    <p>${moment().format('YYYY年MM月DD日 HH:mm')}</p>
-  </div>
-`;
-
-    for (const [feedTitle, feedItems] of groupedItems) {
-      html += `
-  <div class="feed-section">
-    <h2 class="feed-title">${feedTitle}</h2>`;
-
-      for (const item of feedItems) {
-        html += `
-    <div class="article">
-      <a href="${item.link}" class="article-title" target="_blank">${item.title}</a>
-      <div class="article-summary">${item.summary || item.contentSnippet || '暂无摘要'}</div>
-      <div class="article-meta">${moment(item.pubDate).format('MM-DD HH:mm')}</div>
-    </div>`;
-      }
-
-      html += `</div>`;
-    }
-
-    html += `
-  <div class="footer">
-    <p>由 ${config.app.name} 自动生成 | 共 ${items.length} 篇文章</p>
-  </div>
-</body>
-</html>`;
-
-    return html;
-  }
-
-  private groupByFeed(items: FeedItem[]): Map<string, FeedItem[]> {
-    const grouped = new Map<string, FeedItem[]>();
-
-    for (const item of items) {
-      const feedTitle = item.feedTitle || '未知来源';
-      if (!grouped.has(feedTitle)) {
-        grouped.set(feedTitle, []);
-      }
-      grouped.get(feedTitle)!.push(item);
-    }
-
-    return grouped;
-  }
 }
