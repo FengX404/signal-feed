@@ -20,3 +20,5 @@ config.yaml
 
 # IDE/Tools
 .trae/
+.arts/
+.codeartsdoer/
