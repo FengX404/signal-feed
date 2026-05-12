@@ -209,7 +209,6 @@ export class AIService {
         return {
           title: parsed.title || item.title,
           summary: parsed.summary || '无法生成摘要',
-          recommendation: parsed.recommendation || '[添加你的个人观点]',
           tags: parsed.tags || [],
           link: item.link,
           feedTitle: item.feedTitle,
@@ -223,7 +222,6 @@ export class AIService {
     return {
       title: item.title,
       summary: item.contentSnippet?.substring(0, 150) || '暂无摘要',
-      recommendation: '[添加你的个人观点]',
       tags: [],
       link: item.link,
       feedTitle: item.feedTitle,
