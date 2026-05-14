@@ -154,7 +154,7 @@ export class XiaohongshuService {
       width: 360px;
       height: 480px;
       background: #FFFFFF;
-      border-radius: 16px;
+      border-radius: 0px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
