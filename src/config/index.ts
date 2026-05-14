@@ -63,6 +63,9 @@ const sourcesConfig = loadExternalConfig('sources.yaml');
 if (sourcesConfig?.sources) {
   merged.rss.sources = sourcesConfig.sources;
 }
+if (sourcesConfig?.githubSources) {
+  merged.github.sources = sourcesConfig.githubSources;
+}
 
 const brandingConfig = loadExternalConfig('branding.yaml');
 if (brandingConfig) {
