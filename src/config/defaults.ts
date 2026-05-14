@@ -127,10 +127,6 @@ export const defaults = {
   database: {
     path: path.resolve(PROJECT_ROOT, 'data/signalfeed.db'),
   },
-
-  schedule: {
-    cron: '0 12 * * *',
-  },
 };
 
 export interface RSSFeedSource {

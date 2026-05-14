@@ -105,10 +105,6 @@ export const config = {
   database: {
     path: env('DB_PATH', merged.database.path),
   },
-
-  schedule: {
-    cron: env('SCHEDULE_CRON', merged.schedule.cron),
-  },
 };
 
 export { RSSFeedSource, GitHubReleaseSource };
