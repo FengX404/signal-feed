@@ -9,7 +9,7 @@ Extract valuable signals from massive RSS noise. Fetches RSS feeds based on prio
 
 ## Features
 
-- **Signal Extraction**: 11 curated RSS feeds organized in priority tiers, extracting high-value information from noise
+- **Signal Extraction**: 12 curated RSS feeds organized in priority tiers, extracting high-value information from noise
 - **Smart Filtering**: Prioritizes core feeds with automatic keyword pre-filtering for AI/LLM/Frontier Technology content
 - **AI Summarization**: Supports Zhipu AI / OpenAI / DeepSeek with customizable prompts
 - **GitHub Releases**: Subscribe to project release updates with automatic filtering of fixes/testing content
@@ -114,35 +114,34 @@ Supports all OpenAI API-compatible providers. Just configure `baseUrl`, `apiKey`
 
 ### RSS Feed Configuration
 
-Edit `rss.sources` in `config.yaml`:
+Edit `config/sources.yaml` to add subscription sources.
 
-```yaml
-rss:
-  sources:
-    - name: "Your Feed"
-      url: "https://example.com/feed.xml"
-      priority: high    # high | medium | low
-      category: "Category"
-```
+**Current Subscriptions (12 feeds):**
 
-**Configuration Options:**
-- `rss.fetchTimeout` - Individual feed fetch timeout (milliseconds)
-- `rss.defaultDays` - Default days of articles to fetch
-- `rss.targetCount.weekday` - Target article count on weekdays
-- `rss.targetCount.weekend` - Target article count on weekends
-- `rss.targetCount.maxTotal` - Maximum articles per briefing
+| Name | Category | Priority |
+|------|----------|----------|
+| OpenAI | AI Core | high |
+| Stratechery | Business Analysis | high |
+| One Useful Thing | Paradigm Insights | high |
+| Google DeepMind | AI Core | high |
+| Lenny's Newsletter | Product/Growth/Business | medium |
+| MIT Tech Review - AI | Tech Media | medium |
+| 阮一峰 | Tech Blog | medium |
+| Simon Willison | Tech Blog | medium |
+| n8n Production AI Playbook | AI Applications | medium |
+| Ars Technica AI | Tech Media | medium |
+| The Verge AI | Tech Media | medium |
+| Nature Machine Intelligence | Academic Research | medium |
 
 ### GitHub Releases Configuration
 
-Add projects to subscribe to in `config.yaml`:
+Add projects to subscribe to in `config/sources.yaml` under `githubSources`.
 
-```yaml
-github:
-  sources:
-    - name: "langchain"
-      owner: "langchain-ai"
-      repo: "langchain"
-```
+**Current Subscriptions (1 project):**
+
+| Project | Repository |
+|---------|------------|
+| Spring AI Alibaba | alibaba/spring-ai-alibaba |
 
 ### Email Configuration
 
@@ -178,7 +177,6 @@ branding:
 Modify system prompts and user prompt templates for different scenarios under `ai.prompts` node in `config.yaml`:
 
 - `briefingSystem` / `briefingUser` - Article briefing generation
-- `summarizeSystem` / `summarizeUser` - Article summary generation
 - `releaseSystem` / `releaseUser` - GitHub Release summary generation
 
 ## Project Structure
@@ -188,7 +186,7 @@ signalfeed/
 ├── src/
 │   ├── config/
 │   │   ├── index.ts             # Config loader (YAML + ENV)
-│   │   └── defaults.ts          # Built-in defaults
+│   │   └── types.ts             # Config type definitions
 │   ├── services/
 │   │   ├── ai/
 │   │   │   ├── types.ts              # AIProvider interface
@@ -204,6 +202,12 @@ signalfeed/
 │   ├── models/
 │   │   └── index.ts
 │   └── index.ts                 # Main entry point
+├── config/                      # Configuration files
+│   ├── defaults.yaml            # Default runtime parameters
+│   ├── keywords.yaml            # AI keyword list
+│   ├── prompts.yaml             # AI prompt templates
+│   ├── sources.yaml             # RSS feed list
+│   └── branding.yaml            # Brand visual config
 ├── config.example.yaml          # Configuration template
 ├── .env.example                 # Environment variables template
 ├── tsconfig.json                # TypeScript configuration

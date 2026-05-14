@@ -1,0 +1,24 @@
+# 默认模型、超时等参数配置
+# 这些参数通常不需要修改，如需修改请直接编辑此文件
+
+ai:
+  temperature: 0.3
+  maxTokens: 2000
+  summaryTemperature: 0.3
+  summaryMaxTokens: 1500
+  requestInterval: 300
+  timeout: 30000
+
+rss:
+  fetchTimeout: 30000
+  defaultDays: 1
+  targetCount:
+    weekday: 20
+    weekend: 40
+    maxTotal: 100
+
+github:
+  fetchTimeout: 30000
+
+database:
+  path: "data/signalfeed.db"

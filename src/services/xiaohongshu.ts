@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import moment from 'moment';
 import { config } from '../config';
-import { BriefingItem } from './ai';
+import { BriefingItem } from './summarizer';
 
 export class XiaohongshuService {
   private outputDir: string;
@@ -14,9 +13,28 @@ export class XiaohongshuService {
     }
   }
 
+  private formatDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}年${month}月${day}日`;
+  }
+
+  private formatTimestamp(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+  }
+
   generateBatchHTML(items: BriefingItem[]): string {
     const c = config.branding.card;
-    const date = moment().format('YYYY年MM月DD日');
+    const date = this.formatDate();
     const cards = items.map((item, index) => this.cardHTML(item, index)).join('\n');
 
     return `<!DOCTYPE html>
@@ -318,7 +336,7 @@ export class XiaohongshuService {
         <div class="card-summary">${item.summary}</div>
         ${item.tags && item.tags.length > 0 ? `
         <div class="card-tags">
-          ${item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('\n          ')}
+          ${item.tags.map((tag: string) => `<span class="card-tag">${tag}</span>`).join('\n          ')}
         </div>` : ''}
       </div>
     </div>`;
@@ -326,7 +344,7 @@ export class XiaohongshuService {
 
   saveBatch(items: BriefingItem[]): string {
     const html = this.generateBatchHTML(items);
-    const timestamp = moment().format('YYYYMMDD_HHmmss');
+    const timestamp = this.formatTimestamp();
     const filename = `cards_${timestamp}.html`;
     const filepath = path.join(this.outputDir, filename);
 

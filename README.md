@@ -9,7 +9,7 @@
 
 ## 功能特性
 
-- 📡 **信号提取**: 11 个精选 RSS 源，按优先级分层管理，从噪音中提取高价值信息
+- 📡 **信号提取**: 12 个精选 RSS 源，按优先级分层管理，从噪音中提取高价值信息
 - 🎯 **智能筛选**: 优先抓取核心源，自动关键词预筛选 AI/LLM/前沿科技内容
 - 🤖 **AI 摘要**: 支持智谱 AI / OpenAI / DeepSeek，可自定义提示词
 - 📦 **GitHub Releases**: 订阅项目发布动态，自动过滤修复/测试内容
@@ -95,91 +95,68 @@ npm start -- --days 7  # 最近 7 天
 
 ## 配置体系
 
-```
-配置优先级: 环境变量 > config.yaml > 内置默认值
-```
+配置优先级：`环境变量` > `config.yaml` > `内置默认值`
+
+### 配置文件分工
+
+| 文件 | 用途 | 说明 |
+|------|------|------|
+| `.env` | 敏感信息 | API Key、密码等，不提交到 Git |
+| `config.yaml` | 用户配置 | 模型切换、邮箱配置等，不提交到 Git |
+| `config/defaults.yaml` | 默认参数 | 模型参数、超时配置等，通常不需修改 |
+| `config/keywords.yaml` | AI 关键词 | 筛选相关文章的关键词列表 |
+| `config/prompts.yaml` | AI 提示词 | 摘要生成的提示词模板 |
+| `config/sources.yaml` | RSS 订阅源 | 数据源列表和优先级配置 |
+| `config/branding.yaml` | 品牌视觉 | 邮件和卡片的颜色样式 |
+
+所有配置文件都有详细注释，可直接查看文件了解配置项含义。
 
 ### AI 提供商
 
-在 `config.yaml` 中设置 `ai.provider` 为对应的配置名称（如 `openai`、`zhipu`、`deepseek`），然后在 `.env` 中填入对应的 API Key。
-
-支持所有兼容 OpenAI API 的服务商，只需配置 `baseUrl`、`apiKey`、`model` 三项即可。详见 `config.example.yaml`。
-
-**配置项说明：**
-- `ai.provider` - 当前使用的 AI 服务商
-- `ai.temperature` - 生成温度（0-1，越低越确定）
-- `ai.maxTokens` - 最大生成 token 数
-- `ai.requestInterval` - 请求间隔（毫秒），避免触发限流
-- `ai.timeout` - 请求超时时间（毫秒）
+在 `config.yaml` 中设置 `ai.provider`（如 `openai`、`zhipu`、`deepseek`），在 `.env` 中填入对应 API Key。
 
 ### RSS 源配置
 
-编辑 `config.yaml` 中的 `rss.sources`：
+编辑 `config/sources.yaml` 添加订阅源。
 
-```yaml
-rss:
-  sources:
-    - name: "你的源"
-      url: "https://example.com/feed.xml"
-      priority: high    # high | medium | low
-      category: "分类"
-```
+**当前订阅源（12 个）：**
 
-**配置项说明：**
-- `rss.fetchTimeout` - 单个源抓取超时时间（毫秒）
-- `rss.defaultDays` - 默认抓取最近 N 天的文章
-- `rss.targetCount.weekday` - 工作日目标文章数
-- `rss.targetCount.weekend` - 周末目标文章数
-- `rss.targetCount.maxTotal` - 单次简报最大文章数
+| 名称 | 分类 | 优先级 |
+|------|------|--------|
+| OpenAI | AI核心 | high |
+| Stratechery | 商业分析 | high |
+| One Useful Thing | 范式解读 | high |
+| Google DeepMind | AI核心 | high |
+| Lenny's Newsletter | 产品/增长/商业 | medium |
+| MIT Tech Review - AI | 科技媒体 | medium |
+| 阮一峰 | 技术博客 | medium |
+| Simon Willison | 技术博客 | medium |
+| n8n Production AI Playbook | AI应用 | medium |
+| Ars Technica AI | 科技媒体 | medium |
+| The Verge AI | 科技媒体 | medium |
+| Nature Machine Intelligence | 学术研究 | medium |
 
 ### GitHub Releases 配置
 
-在 `config.yaml` 中添加要订阅的项目：
+在 `config/sources.yaml` 的 `githubSources` 中添加要订阅的项目。
 
-```yaml
-github:
-  sources:
-    - name: "langchain"
-      owner: "langchain-ai"
-      repo: "langchain"
-```
+**当前订阅项目（1 个）：**
+
+| 项目 | 仓库 |
+|------|------|
+| Spring AI Alibaba | alibaba/spring-ai-alibaba |
 
 ### 邮件配置
 
-```yaml
-email:
-  smtp:
-    host: "smtp.qq.com"
-    port: 465
-    secure: true
-    user: "your_email@example.com"
-    pass: "your_auth_code"
-  senderName: "SignalFeed"
-  subjectPrefix: "SignalFeed"
-```
+在 `config.yaml` 的 `email.smtp` 中配置 SMTP 信息，或在 `.env` 中设置环境变量。
 
 ### 品牌视觉
 
-```yaml
-branding:
-  email:
-    primary: "#667eea"
-    headerEmoji: "📡"
-  card:
-    primary: "#4A9B6D"
-```
-
-**配置项说明：**
-- `branding.email` - 邮件简报的颜色和样式
-- `branding.card` - 小红书卡片的颜色和样式
+在 `config.yaml` 的 `branding` 中自定义邮件和卡片的颜色样式。
 
 ### 自定义 AI 提示词
 
-在 `config.yaml` 的 `ai.prompts` 节点下修改各场景的系统提示词和用户提示词模板：
-
-- `briefingSystem` / `briefingUser` - 文章简报生成
-- `summarizeSystem` / `summarizeUser` - 文章摘要生成
-- `releaseSystem` / `releaseUser` - GitHub Release 摘要生成
+编辑 `config/prompts.yaml` 修改摘要生成的提示词风格。
 
 ## 项目结构
 
@@ -188,7 +165,7 @@ signalfeed/
 ├── src/
 │   ├── config/
 │   │   ├── index.ts             # 配置加载器 (YAML + ENV)
-│   │   └── defaults.ts          # 内置默认值
+│   │   └── types.ts             # 配置类型定义
 │   ├── services/
 │   │   ├── ai/
 │   │   │   ├── types.ts              # AIProvider 接口
@@ -204,6 +181,12 @@ signalfeed/
 │   ├── models/
 │   │   └── index.ts
 │   └── index.ts                 # 主程序入口
+├── config/                      # 配置文件目录
+│   ├── defaults.yaml            # 默认运行参数
+│   ├── keywords.yaml            # AI 关键词列表
+│   ├── prompts.yaml             # AI 提示词模板
+│   ├── sources.yaml             # RSS 订阅源列表
+│   └── branding.yaml            # 品牌视觉配置
 ├── config.example.yaml          # 配置模板
 ├── .env.example                 # 环境变量模板
 ├── tsconfig.json                # TypeScript 配置

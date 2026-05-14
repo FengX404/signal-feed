@@ -1,18 +1,13 @@
-# SignalFeed 配置文件
+# SignalFeed 用户配置文件
 # 复制此文件为 config.yaml，按需修改后即可使用
 # 环境变量优先级高于此文件中的值
-
-app:
-  name: "SignalFeed"
-  userAgent: "Mozilla/5.0 (compatible; SignalFeed/1.0)"
 
 # ============================================================
 # AI 配置
 # ============================================================
 ai:
   # provider 指定使用的模型服务商，对应 providers 下的配置名称
-  # 内置支持: openai | zhipu | deepseek
-  # 也可自定义添加其他兼容 OpenAI API 的服务商
+  # 支持所有 OpenAI 兼容 API，只需在 providers 下添加配置即可
   provider: zhipu
 
   # 模型服务商配置
@@ -22,223 +17,16 @@ ai:
       baseUrl: "https://api.openai.com/v1"
       apiKey: ""                      # 可通过环境变量 OPENAI_API_KEY 覆盖
       model: "gpt-4o-mini"
-    
+
     zhipu:
       baseUrl: "https://open.bigmodel.cn/api/paas/v4"
       apiKey: ""                      # 可通过环境变量 ZHIPU_API_KEY 覆盖
       model: "glm-4-flash"
-    
+
     deepseek:
       baseUrl: "https://api.deepseek.com/v1"
       apiKey: ""                      # 可通过环境变量 DEEPSEEK_API_KEY 覆盖
       model: "deepseek-chat"
-    
-    # 示例：添加其他兼容 OpenAI API 的服务商
-    # moonshot:
-    #   baseUrl: "https://api.moonshot.cn/v1"
-    #   apiKey: ""
-    #   model: "moonshot-v1-8k"
-    #
-    # ollama:  # 本地模型
-    #   baseUrl: "http://localhost:11434/v1"
-    #   apiKey: "ollama"  # Ollama 不需要真实 key，随意填写
-    #   model: "llama3"
-
-  keywords:
-    - AI
-    - artificial intelligence
-    - machine learning
-    - deep learning
-    - neural network
-    - GPT
-    - LLM
-    - large language model
-    - ChatGPT
-    - Claude
-    - Gemini
-    - OpenAI
-    - Anthropic
-    - DeepSeek
-    - 人工智能
-    - 机器学习
-    - 深度学习
-    - 大模型
-    - 大语言模型
-    - 神经网络
-    - quantum
-    - blockchain
-    - Web3
-    - metaverse
-    - AR/VR
-    - 量子
-    - 区块链
-    - 元宇宙
-    - AGI
-    - transformer
-    - NLP
-    - computer vision
-    - reinforcement learning
-    - diffusion
-    - generative AI
-    - 生成式AI
-
-  # AI 调用参数
-  temperature: 0.3
-  maxTokens: 2000
-  summaryTemperature: 0.3
-  summaryMaxTokens: 1500
-  requestInterval: 300          # 两次请求间隔 (ms)
-  timeout: 30000                # 请求超时 (ms)
-
-  # AI 提示词（可自定义）
-  prompts:
-    briefingSystem: |
-      你是一个专业的科技文章摘要助手。核心原则：摘要必须包含具体数据、数字、产品名、技术细节，而非泛泛概括。禁止使用"本文探讨了""文章分析了"等空洞开头，直接告诉读者发生了什么、得出了什么结论。所有输出必须使用中文,专有名词可保留英文。
-    briefingUser: |
-      请为以下文章生成一个适合个人IP的简报条目。
-
-      标题:{title}
-      来源:{source}
-      链接:{link}
-
-      内容:
-      {content}
-
-      请生成:
-      1. 一个简洁准确的中文标题:
-         - 准确反映文章核心内容
-         - 突出关键信息或观点
-         - 避免夸张和标题党
-         - 如果原标题已经很好,可以保留或微调
-
-      2. 一段中文摘要（严格控制在120-150字之间，不得少于120字，不得多于150字），要求逐条遵守:
-         - 必须包含具体信息：数据、数字、百分比、产品名、模型名、技术细节、研究发现或实验结论
-         - 直接告诉读者"发生了什么"或"得出了什么结论"，禁止使用"本文探讨了""文章分析了""介绍了XX的发展"等概括性开头
-         - 反例："本文探讨了AI在医疗领域的应用前景" → 正例："Google DeepMind发布了Med-PaLM 3，在USMLE医学考试中达到92%准确率，超越人类医生的87%"
-         - 反例："OpenAI发布了新功能" → 正例："OpenAI为ChatGPT增加了代码解释器功能，支持上传CSV/JSON文件并自动生成可视化图表"
-         - 字数示例："OpenAI发布了GPT-4 Turbo模型，支持128K上下文窗口，价格降低60%至每1K token输入0.01美元。该模型在MMLU基准测试中达到86.4%准确率，相比GPT-4的86.3%略有提升。新模型还支持函数调用和可复现输出，开发者可通过API立即使用。"（约120字）
-
-      3. 3-5个小红书风格标签,如 #AI资讯 #个人IP #模型能力
-
-      重要:全部内容必须使用中文撰写,专有名词(如产品名、公司名、技术术语)可保留英文原文。
-
-      请按以下JSON格式返回:
-      {
-        "title": "标题",
-        "summary": "内容总结",
-        "tags": ["#标签1", "#标签2", "#标签3"]
-      }
-    summarizeSystem: |
-      你是一个专业的科技文章摘要助手。核心原则：摘要必须包含具体数据、数字、产品名、技术细节，而非泛泛概括。禁止使用"本文探讨了""文章分析了"等空洞开头，直接告诉读者发生了什么、得出了什么结论。所有输出必须使用中文，专有名词可保留英文。
-    summarizeUser: |
-      请提取以下文章的核心信息，用中文撰写摘要（严格控制在120-150字之间，不得少于120字，不得多于150字），必须包含具体数据和关键发现，避免空泛的概括。
-
-      标题：{title}
-
-      内容：{content}
-    releaseSystem: |
-      你是一个专业的技术文档摘要助手，擅长提炼软件更新的核心内容。所有输出必须使用中文，专有名词可保留英文。
-    releaseUser: |
-      请分析以下 GitHub Release 的更新内容，生成一个简洁的中文摘要。
-
-      版本：{version}
-      发布时间：{publishedAt}
-      链接：{link}
-
-      更新内容：
-      {content}
-
-      要求：
-      1. 排除所有 fix/修复、test/测试 相关的内容，不要在摘要中提及
-      2. 总结主要的新功能、新特性、重要改进
-      3. 如果有特别重要的更新（如新功能、重大改进），用 **加粗** 标记
-      4. 摘要严格控制在 120-150 字之间，不得少于120字，不得多于150字
-      5. 如果内容全部是修复或测试相关，返回 "无重要更新"
-
-      重要：全部内容必须使用中文撰写，专有名词（如产品名、技术术语、函数名等）可保留英文原文。
-
-      请直接返回摘要内容，不要包含版本号和发布时间。
-
-# ============================================================
-# RSS 源配置
-# ============================================================
-rss:
-  fetchTimeout: 30000           # 单个源抓取超时 (ms)
-  defaultDays: 1                # 默认抓取最近 N 天的文章
-  targetCount:
-    weekday: 20                 # 工作日目标文章数
-    weekend: 40                 # 周末目标文章数
-    maxTotal: 100               # 单次简报最大文章数
-
-  # RSS 订阅源
-  # priority: high > medium > low（高优先级源优先抓取）
-  sources:
-    - name: "OpenAI"
-      url: "https://openai.com/news/rss.xml"
-      priority: high
-      category: "AI核心"
-
-    - name: "Stratechery"
-      url: "https://stratechery.com/feed/"
-      priority: high
-      category: "商业分析"
-
-    - name: "One Useful Thing"
-      url: "https://www.oneusefulthing.org/feed"
-      priority: high
-      category: "范式解读"
-
-    - name: "Benedict Evans"
-      url: "https://www.ben-evans.com/newsletter/feed"
-      priority: high
-      category: "宏观趋势"
-
-    - name: "BestBlogs"
-      url: "https://www.bestblogs.dev/zh/feed/rss"
-      priority: high
-      category: "开发/设计/商业"
-
-    - name: "AI 观察室"
-      url: "https://feeds.xiaoyuzhoufm.com/ai-observer"
-      priority: high
-      category: "AI 开发/趋势"
-
-    - name: "Lenny's Newsletter"
-      url: "https://www.lennysnewsletter.com/feed"
-      priority: medium
-      category: "产品/增长/商业"
-
-    - name: "MIT Tech Review - AI"
-      url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/"
-      priority: medium
-      category: "科技媒体"
-
-    - name: "阮一峰"
-      url: "https://www.ruanyifeng.com/blog/atom.xml"
-      priority: medium
-      category: "技术博客"
-
-    - name: "Simon Willison"
-      url: "https://simonwillison.net/atom/everything/"
-      priority: medium
-      category: "技术博客"
-
-    - name: "n8n Production AI Playbook"
-      url: "https://blog.n8n.io/tag/production-ai-playbook/rss/"
-      priority: medium
-      category: "AI应用"
-
-# ============================================================
-# GitHub Releases 配置
-# ============================================================
-github:
-  fetchTimeout: 30000
-  sources: []
-  # 示例:
-  # sources:
-  #   - name: "langchain"
-  #     owner: "langchain-ai"
-  #     repo: "langchain"
 
 # ============================================================
 # 邮件配置
@@ -250,35 +38,5 @@ email:
     secure: true
     user: ""                      # 可通过环境变量 SMTP_USER 覆盖
     pass: ""                      # 可通过环境变量 SMTP_PASS 覆盖
-  senderName: "SignalFeed"        # 发件人显示名称
-  subjectPrefix: "SignalFeed"     # 邮件主题前缀
-
-# ============================================================
-# 品牌视觉
-# ============================================================
-branding:
-  # 邮件样式
-  email:
-    primary: "#667eea"
-    primaryLight: "#e8eaf6"
-    primaryDark: "#5c6bc0"
-    surface: "#f5f5f5"
-    headerEmoji: "📡"
-
-  # 小红书/社交媒体卡片样式
-  card:
-    primary: "#4A9B6D"
-    primaryLight: "#E6F4EC"
-    primaryDark: "#357A52"
-    surface: "#F8FAF8"
-    border: "#E2E8E6"
-    borderLight: "#EEF1EF"
-    textPrimary: "#1E293B"
-    textSecondary: "#64748B"
-    textDisabled: "#94A3B8"
-
-# ============================================================
-# 数据存储
-# ============================================================
-database:
-  path: "data/signalfeed.db"
+  senderName: "SignalFeed"
+  subjectPrefix: "SignalFeed"

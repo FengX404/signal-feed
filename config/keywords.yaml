@@ -1,0 +1,43 @@
+# AI 关键词配置
+# 用于筛选和标记 AI 相关内容
+
+keywords:
+  # 英文关键词
+  - AI
+  - artificial intelligence
+  - machine learning
+  - deep learning
+  - neural network
+  - GPT
+  - LLM
+  - large language model
+  - ChatGPT
+  - Claude
+  - Gemini
+  - OpenAI
+  - Anthropic
+  - DeepSeek
+  - quantum
+  - blockchain
+  - Web3
+  - metaverse
+  - AR/VR
+  - AGI
+  - transformer
+  - NLP
+  - computer vision
+  - reinforcement learning
+  - diffusion
+  - generative AI
+
+  # 中文关键词
+  - 人工智能
+  - 机器学习
+  - 深度学习
+  - 大模型
+  - 大语言模型
+  - 神经网络
+  - 量子
+  - 区块链
+  - 元宇宙
+  - 生成式AI

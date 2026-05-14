@@ -1,0 +1,71 @@
+# RSS 订阅源配置
+# priority: high > medium > low（高优先级源优先抓取）
+
+sources:
+  - name: "OpenAI"
+    url: "https://openai.com/news/rss.xml"
+    priority: high
+    category: "AI核心"
+
+  - name: "Stratechery"
+    url: "https://stratechery.com/feed/"
+    priority: high
+    category: "商业分析"
+
+  - name: "One Useful Thing"
+    url: "https://www.oneusefulthing.org/feed"
+    priority: high
+    category: "范式解读"
+
+  - name: "Lenny's Newsletter"
+    url: "https://www.lennysnewsletter.com/feed"
+    priority: medium
+    category: "产品/增长/商业"
+
+  - name: "MIT Tech Review - AI"
+    url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/"
+    priority: medium
+    category: "科技媒体"
+
+  - name: "阮一峰"
+    url: "https://www.ruanyifeng.com/blog/atom.xml"
+    priority: medium
+    category: "技术博客"
+
+  - name: "Simon Willison"
+    url: "https://simonwillison.net/atom/everything/"
+    priority: medium
+    category: "技术博客"
+
+  - name: "n8n Production AI Playbook"
+    url: "https://blog.n8n.io/tag/production-ai-playbook/rss/"
+    priority: medium
+    category: "AI应用"
+
+  - name: "Google DeepMind"
+    url: "https://deepmind.google/blog/rss.xml"
+    priority: high
+    category: "AI核心"
+
+  - name: "Ars Technica AI"
+    url: "https://arstechnica.com/ai/feed/"
+    priority: medium
+    category: "科技媒体"
+
+  - name: "The Verge AI"
+    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+    priority: medium
+    category: "科技媒体"
+
+  - name: "Nature Machine Intelligence"
+    url: "https://www.nature.com/natmachintell.rss"
+    priority: medium
+    category: "学术研究"
+
+# GitHub Release 订阅源配置
+# 用于追踪开源项目的版本更新
+
+githubSources:
+  - name: "Spring AI Alibaba"
+    owner: "alibaba"
+    repo: "spring-ai-alibaba"
