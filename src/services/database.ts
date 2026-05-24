@@ -141,6 +141,31 @@ export class DatabaseService {
     }));
   }
 
+  getFeedItemById(id: string): FeedItem | undefined {
+    const stmt = this.db.prepare('SELECT * FROM feed_items WHERE id = ?');
+    const row = stmt.get(id) as any;
+    if (!row) return undefined;
+
+    return {
+      id: row.id,
+      title: row.title,
+      link: row.link,
+      pubDate: row.pub_date,
+      content: row.content,
+      contentSnippet: row.content_snippet,
+      summary: row.summary,
+      feedUrl: row.feed_url,
+      feedTitle: row.feed_title,
+      createdAt: new Date(row.created_at),
+    };
+  }
+
+  hasBriefingBeenGenerated(id: string): boolean {
+    const stmt = this.db.prepare('SELECT summary FROM feed_items WHERE id = ?');
+    const row = stmt.get(id) as any;
+    return !!row?.summary;
+  }
+
   getUnsummarizedItems(): FeedItem[] {
     const stmt = this.db.prepare(`
       SELECT * FROM feed_items

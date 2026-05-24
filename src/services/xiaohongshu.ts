@@ -185,7 +185,7 @@ export class XiaohongshuService {
     }
 
     .card-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
       line-height: 1.35;
       height: 98px;
@@ -351,5 +351,62 @@ export class XiaohongshuService {
     fs.writeFileSync(filepath, html, 'utf-8');
     console.log(`卡片已保存: ${filepath}`);
     return filepath;
+  }
+
+  cleanupOldCards(): void {
+    const retainDays = config.cards?.retainDays;
+
+    if (retainDays === null || retainDays === undefined || retainDays < 0) {
+      return;
+    }
+
+    const files = fs.readdirSync(this.outputDir)
+      .filter(f => f.startsWith('cards_') && f.endsWith('.html'))
+      .sort()
+      .reverse();
+
+    if (files.length === 0) {
+      return;
+    }
+
+    if (retainDays === 0) {
+      const toDelete = files.slice(1);
+      for (const file of toDelete) {
+        const filepath = path.join(this.outputDir, file);
+        fs.unlinkSync(filepath);
+      }
+      if (toDelete.length > 0) {
+        console.log(`卡片清理: 保留最新1条，删除 ${toDelete.length} 条旧记录`);
+      }
+      return;
+    }
+
+    const now = new Date();
+    const cutoffDate = new Date(now.getTime() - retainDays * 24 * 60 * 60 * 1000);
+    const cutoffDateStr = this.dateToFileDateStr(cutoffDate);
+
+    const toDelete: string[] = [];
+    for (const file of files) {
+      const fileDateStr = file.substring(6, 14);
+      if (fileDateStr < cutoffDateStr) {
+        toDelete.push(file);
+      }
+    }
+
+    for (const file of toDelete) {
+      const filepath = path.join(this.outputDir, file);
+      fs.unlinkSync(filepath);
+    }
+
+    if (toDelete.length > 0) {
+      console.log(`卡片清理: 保留最近${retainDays}天，删除 ${toDelete.length} 条旧记录`);
+    }
+  }
+
+  private dateToFileDateStr(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}${month}${day}`;
   }
 }

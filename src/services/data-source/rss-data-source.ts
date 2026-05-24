@@ -102,6 +102,7 @@ export class RSSDataSource implements DataSource {
 
   private async fetchFeed(source: RSSFeedSource, days: number): Promise<FeedItem[]> {
     try {
+      let skippedCount = 0;
       const items = await withRetry(
         async () => {
           console.log(`[${source.priority.toUpperCase()}] 正在获取：${source.name} (${source.category})`);
@@ -115,6 +116,7 @@ export class RSSDataSource implements DataSource {
 
           const now = new Date();
           const cutoffTime = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+          skippedCount = 0;
           const items: FeedItem[] = [];
 
           for (const item of feed.items) {
@@ -137,6 +139,12 @@ export class RSSDataSource implements DataSource {
             };
 
             this.db.saveFeedItem(feedItem);
+
+            if (this.db.hasBriefingBeenGenerated(feedItem.id)) {
+              skippedCount++;
+              continue;
+            }
+
             items.push(feedItem);
           }
 
@@ -151,7 +159,7 @@ export class RSSDataSource implements DataSource {
         }
       );
 
-      console.log(`  ✓ ${source.name}: 获取 ${items.length} 篇文章（最近 ${days} 天）`);
+      console.log(`  ✓ ${source.name}: 获取 ${items.length} 篇文章（最近 ${days} 天）${skippedCount > 0 ? `，跳过 ${skippedCount} 篇已生成简报` : ''}`);
       return items;
     } catch (error) {
       const errorMsg = (error as Error).message;

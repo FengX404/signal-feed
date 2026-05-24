@@ -63,6 +63,7 @@ export class Orchestrator {
 
       console.log('\n步骤5: 生成卡片');
       this.xiaohongshuService.saveBatch(briefingItems);
+      this.xiaohongshuService.cleanupOldCards();
 
       console.log('\n步骤6: 获取 GitHub Releases');
       const releaseItems = await this.fetchGitHubReleases();

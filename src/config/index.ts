@@ -144,6 +144,10 @@ export const config = {
   database: {
     path: env('DB_PATH', merged.database?.path || path.resolve(PROJECT_ROOT, 'data/signalfeed.db')),
   },
+
+  cards: {
+    retainDays: merged.cards?.retainDays as number | null | undefined,
+  },
 };
 
 export { RSSFeedSource, GitHubReleaseSource };

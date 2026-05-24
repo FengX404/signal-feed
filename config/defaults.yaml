@@ -22,3 +22,6 @@ github:
 
 database:
   path: "data/signalfeed.db"
+
+cards:
+  retainDays: null
