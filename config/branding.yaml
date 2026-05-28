@@ -1,22 +1,27 @@
 # 品牌视觉配置
-# 用于邮件简报和社交媒体卡片的样式定制
+# 主色：竹绿 #1BA784 | 强调色：琥珀 #C87D3A
+# 参考：~/wiki/personal-ip/docs/assets/brand-color.md
 
-# 邮件样式
 email:
-  primary: "#667eea"
-  primaryLight: "#e8eaf6"
-  primaryDark: "#5c6bc0"
-  surface: "#f5f5f5"
+  primary: "#1BA784"
+  primaryLight: "#E8F6F2"
+  primaryDark: "#158A6D"
+  surface: "#F5F5F5"
+  accent: "#C87D3A"
+  accentLight: "#F9EFE6"
+  accentDark: "#A6642E"
   headerEmoji: "📡"
 
-# 小红书/社交媒体卡片样式
 card:
-  primary: "#4A9B6D"
-  primaryLight: "#E6F4EC"
-  primaryDark: "#357A52"
-  surface: "#F8FAF8"
-  border: "#E2E8E6"
-  borderLight: "#EEF1EF"
-  textPrimary: "#1E293B"
-  textSecondary: "#64748B"
-  textDisabled: "#94A3B8"
+  primary: "#1BA784"
+  primaryLight: "#E8F6F2"
+  primaryDark: "#158A6D"
+  surface: "#F5F5F5"
+  border: "#E0E0E0"
+  borderLight: "#EEEEEE"
+  textPrimary: "#1A1A1A"
+  textSecondary: "#666666"
+  textDisabled: "#999999"
+  accent: "#C87D3A"
+  accentLight: "#F9EFE6"
+  accentDark: "#A6642E"

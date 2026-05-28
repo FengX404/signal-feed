@@ -44,6 +44,7 @@ export class XiaohongshuService {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI资讯卡片 - ${date}</title>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --brand-primary: ${c.primary};
@@ -55,6 +56,10 @@ export class XiaohongshuService {
       --brand-text-primary: ${c.textPrimary};
       --brand-text-secondary: ${c.textSecondary};
       --brand-text-disabled: ${c.textDisabled};
+      --brand-accent: ${c.accent};
+      --brand-accent-light: ${c.accentLight};
+      --brand-accent-dark: ${c.accentDark};
+      --brand-primary-rgb: 27, 167, 132;
     }
 
     * {
@@ -64,7 +69,7 @@ export class XiaohongshuService {
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
       background: var(--brand-surface);
       color: var(--brand-text-primary);
       -webkit-font-smoothing: antialiased;
@@ -159,6 +164,7 @@ export class XiaohongshuService {
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
+      position: relative;
       box-shadow:
         0 2px 12px rgba(0, 0, 0, 0.06),
         0 4px 24px rgba(0, 0, 0, 0.04);
@@ -168,8 +174,15 @@ export class XiaohongshuService {
     .card:hover {
       transform: translateY(-4px);
       box-shadow:
-        0 4px 20px rgba(74, 155, 109, 0.10),
+        0 4px 20px rgba(var(--brand-primary-rgb), 0.12),
         0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-divider {
+      height: 3px;
+      flex-shrink: 0;
+      background: linear-gradient(90deg, var(--brand-primary), var(--brand-accent));
+      opacity: 0.3;
     }
 
     .card-top {
@@ -182,9 +195,38 @@ export class XiaohongshuService {
       justify-content: center;
       min-height: 140px;
       position: relative;
+      overflow: hidden;
+    }
+
+    .card-top::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(255,255,255,0.04) 20px,
+        rgba(255,255,255,0.04) 21px
+      );
+      pointer-events: none;
+    }
+
+    .card-top::after {
+      content: '';
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--brand-accent);
+      opacity: 0.45;
+      box-shadow: 0 0 6px var(--brand-accent);
     }
 
     .card-title {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
       font-size: 26px;
       font-weight: 800;
       line-height: 1.35;
@@ -232,14 +274,63 @@ export class XiaohongshuService {
     }
 
     .card-tag {
-      background: white;
-      color: var(--brand-primary-dark);
-      border: 1px solid var(--brand-border);
+      background: var(--brand-accent-light);
+      color: var(--brand-accent-dark);
+      border: 1px solid var(--brand-accent);
       padding: 4px 10px;
       border-radius: 5px;
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.2px;
+    }
+
+    .card-download-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 10;
+      cursor: default;
+    }
+
+    .card:hover .card-download-overlay {
+      opacity: 1;
+    }
+
+    .card-download-btn {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 12px 32px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-download-btn:hover {
+      background: rgba(255, 255, 255, 0.32);
+      transform: scale(1.06);
+      box-shadow: 0 6px 28px rgba(0, 0, 0, 0.16);
+    }
+
+    .card-download-btn:active {
+      transform: scale(0.97);
     }
 
     @media (max-width: 1520px) {
@@ -262,8 +353,7 @@ export class XiaohongshuService {
     <div class="toolbar-title">${date} · AI资讯卡片 · 共 ${items.length} 篇</div>
     <div class="toolbar-actions">
       <span class="btn-status" id="status"></span>
-      <button class="btn btn-outline" onclick="exportAll()">导出全部</button>
-      <button class="btn btn-primary" onclick="exportSingle(0)">导出首张</button>
+      <button class="btn btn-primary" onclick="exportAll()">导出全部</button>
     </div>
   </div>
 
@@ -332,12 +422,19 @@ export class XiaohongshuService {
         <h2 class="card-title">${item.title}</h2>
         <div class="card-source">${item.feedTitle || '未知来源'}</div>
       </div>
+      <div class="card-divider"></div>
       <div class="card-bottom">
         <div class="card-summary">${item.summary}</div>
         ${item.tags && item.tags.length > 0 ? `
         <div class="card-tags">
           ${item.tags.map((tag: string) => `<span class="card-tag">${tag}</span>`).join('\n          ')}
         </div>` : ''}
+      </div>
+      <div class="card-download-overlay">
+        <button class="card-download-btn" onclick="exportSingle(${index})">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出图片
+        </button>
       </div>
     </div>`;
   }

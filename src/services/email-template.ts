@@ -94,9 +94,9 @@ export class EmailTemplate {
       margin-top: 14px;
     }
     .card-tag {
-      background: white;
-      color: ${c.primaryDark};
-      border: 1px solid ${c.border};
+      background: ${c.accentLight};
+      color: ${c.accentDark};
+      border: 1px solid ${c.accent};
       padding: 4px 10px;
       border-radius: 5px;
       font-size: 12px;
