@@ -82,10 +82,9 @@ export class EmailTemplate {
       padding: 24px;
     }
     .card-summary {
-      font-size: 14px;
-      line-height: 1.8;
+      font-size: 15px;
+      line-height: 1.7;
       color: ${c.textSecondary};
-      text-align: justify;
     }
     .footer {
       text-align: center;

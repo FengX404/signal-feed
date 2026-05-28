@@ -187,13 +187,12 @@ export class XiaohongshuService {
 
     .card-top {
       background: var(--brand-primary);
-      padding: 28px 24px;
+      padding: 28px 24px 24px;
       color: white;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      min-height: 140px;
+      height: 190px;
       position: relative;
       overflow: hidden;
     }
@@ -229,18 +228,17 @@ export class XiaohongshuService {
       font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
       font-size: 26px;
       font-weight: 800;
-      line-height: 1.35;
-      height: 98px;
+      line-height: 1.4;
       letter-spacing: -0.5px;
+      text-align: left;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      text-align: left;
     }
 
     .card-source {
-      margin-top: 12px;
+      margin-top: auto;
       font-size: 12px;
       opacity: 0.7;
       letter-spacing: 0.3px;
@@ -257,12 +255,10 @@ export class XiaohongshuService {
     }
 
     .card-summary {
-      font-size: 14px;
-      line-height: 1.8;
+      font-size: 15px;
+      line-height: 1.7;
       color: var(--brand-text-secondary);
       flex: 1;
-      overflow: hidden;
-      text-align: justify;
     }
 
     .card-download-overlay {
