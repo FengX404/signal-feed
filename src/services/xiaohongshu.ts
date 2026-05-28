@@ -265,25 +265,6 @@ export class XiaohongshuService {
       text-align: justify;
     }
 
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 14px;
-      flex-shrink: 0;
-    }
-
-    .card-tag {
-      background: var(--brand-accent-light);
-      color: var(--brand-accent-dark);
-      border: 1px solid var(--brand-accent);
-      padding: 4px 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-    }
-
     .card-download-overlay {
       position: absolute;
       inset: 0;
@@ -425,10 +406,6 @@ export class XiaohongshuService {
       <div class="card-divider"></div>
       <div class="card-bottom">
         <div class="card-summary">${item.summary}</div>
-        ${item.tags && item.tags.length > 0 ? `
-        <div class="card-tags">
-          ${item.tags.map((tag: string) => `<span class="card-tag">${tag}</span>`).join('\n          ')}
-        </div>` : ''}
       </div>
       <div class="card-download-overlay">
         <button class="card-download-btn" onclick="exportSingle(${index})">

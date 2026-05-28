@@ -87,22 +87,6 @@ export class EmailTemplate {
       color: ${c.textSecondary};
       text-align: justify;
     }
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 14px;
-    }
-    .card-tag {
-      background: ${c.accentLight};
-      color: ${c.accentDark};
-      border: 1px solid ${c.accent};
-      padding: 4px 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-    }
     .footer {
       text-align: center;
       padding: 20px;
@@ -254,10 +238,9 @@ export class EmailTemplate {
       <a href="${item.link}" class="card-title" target="_blank">${item.title}</a>
       <div class="card-source">${item.feedTitle || '未知来源'}</div>
     </div>
-    <div class="card-bottom">
-      <div class="card-summary">${item.summary}</div>
-      ${item.tags && item.tags.length > 0 ? `<div class="card-tags">${item.tags.map((tag: string) => `<span class="card-tag">${tag}</span>`).join('')}</div>` : ''}
-    </div>
+      <div class="card-bottom">
+        <div class="card-summary">${item.summary}</div>
+      </div>
   </div>`;
   }
 
